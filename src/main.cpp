@@ -21,7 +21,6 @@
 #define motorB1         4
 #define motorB2         0
 
-
 //define encoder pins
 #define encoderT1       21
 #define encoderT2       19
@@ -47,19 +46,30 @@ void tInt() {
     translationTicks--;
   }
 
-  Serial.println(translationTicks);
+
+  //Serial.println(translationTicks);
 }
 
 //rotation encoder ISR
 void rInt() {
+  int direction = digitalRead(encoderR2);
 
-  Serial.println(rotationTicks);
+  if (direction == HIGH) {
+    rotationTicks++;
+  } else {
+    rotationTicks--;
+  }
 }
 
 //bending encoder ISR
 void bInt() {
+  int direction = digitalRead(encoderB2);
 
-  Serial.println(bendingTicks);
+  if (direction == HIGH) {
+    bendingTicks++;
+  } else {
+    bendingTicks--;
+  }
 }
 
 
@@ -112,13 +122,6 @@ void setMotor (int power, int direction, int motorPin1, int motorPin2) {
 
 void loop() {
 
-  // digitalWrite(motorT2,HIGH);
-  // Serial.println("on");
-  // delay(1000);
-  // digitalWrite(motorT2, LOW);
-  // Serial.println("off");
-  // delay(1000);
-
   //read all buttons 
   int cButtonRedVal = digitalRead(cButtonRed);
   int ccButtonRedVal = digitalRead(ccButtonRed);
@@ -151,6 +154,9 @@ void loop() {
     setMotor(HIGH, cClockwise, motorB1, motorB2);
   }
   
+  //Serial.printf("TranslationTicks: %d\n", translationTicks);
+  // Serial.printf("Rotation Ticks: %d\n", rotationTicks);
+  Serial.printf("Bending Ticks: %d\n", bendingTicks);
   
 
   delay(100);
