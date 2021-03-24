@@ -7,12 +7,12 @@
 #define cClockwise      0x0
 
 //define button pins
-#define cButtonRed      34
-#define ccButtonRed     35
-#define cButtonGreen    32
-#define ccButtonGreen   33
-#define cButtonBlue     25
-#define ccButtonBlue    26
+#define cButtonRed      35
+#define ccButtonRed     34
+#define cButtonGreen    33
+#define ccButtonGreen   32
+#define cButtonBlue     26
+#define ccButtonBlue    25
 
 //define motor output pins
 #define motorT1         23
@@ -121,32 +121,32 @@ void loop() {
 
   if (cButtonRedVal == ccButtonRedVal) {
     
-    motorT.setMotor(LOW, clockwise);
+    motorT.setMotor(LOW, clockwise, translationTicks);
   } else if (cButtonRedVal == HIGH) {
-    motorT.setMotor(HIGH, clockwise);
+    motorT.setMotor(HIGH, clockwise, translationTicks);
   } else if (ccButtonRedVal == HIGH) {
-    motorT.setMotor(HIGH, cClockwise);
+    motorT.setMotor(HIGH, cClockwise, translationTicks);
   }
 
   if (cButtonGreenVal == ccButtonGreenVal) {
-    motorR.setMotor(LOW, clockwise);
+    motorR.setMotor(LOW, clockwise, rotationTicks);
   } else if (cButtonGreenVal == HIGH) {
-    motorR.setMotor(HIGH, clockwise);
+    motorR.setMotor(HIGH, clockwise, rotationTicks);
   } else if (ccButtonGreenVal == HIGH) {
-    motorR.setMotor(HIGH, cClockwise);
+    motorR.setMotor(HIGH, cClockwise, rotationTicks);
   }
 
   if (cButtonBlueVal == ccButtonBlueVal) {
-    motorB.setMotor(LOW, clockwise);
+    motorB.setMotor(LOW, clockwise, bendingTicks);
   } else if (cButtonBlueVal == HIGH) {
-    motorB.setMotor(HIGH, clockwise);
+    motorB.setMotor(HIGH, clockwise, bendingTicks);
   } else if (ccButtonBlueVal == HIGH) {
-    motorB.setMotor(HIGH, cClockwise);
+    motorB.setMotor(HIGH, cClockwise, bendingTicks);
   }
   
   //Serial.printf("TranslationTicks: %d\n", translationTicks);
-  // Serial.printf("Rotation Ticks: %d\n", rotationTicks);
-  Serial.printf("Bending Ticks: %d\n", bendingTicks);
+  Serial.printf("Rotation Ticks: %d\n", rotationTicks);
+  //Serial.printf("Bending Ticks: %d\n", bendingTicks);
   
 
   delay(100);
