@@ -36,6 +36,10 @@ int translationTicks = 0;
 int rotationTicks = 0;
 int bendingTicks = 0;
 
+//initialize translation to bending ratio
+
+int bendingRatio = 10;
+
 //create motor objects
 Motor motorT(500, -500, motorT1, motorT2, encoderT1, encoderT2);
 Motor motorR(500, -500, motorR1, motorR2, encoderR1, encoderR2);
