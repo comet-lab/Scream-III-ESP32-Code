@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <motor.h>
 
 //define rotation 
 
@@ -34,6 +35,11 @@
 int translationTicks = 0;
 int rotationTicks = 0;
 int bendingTicks = 0;
+
+//create motor objects
+Motor motorT(500, -500, motorT1, motorT2, encoderT1, encoderT2);
+Motor motorR(500, -500, motorR1, motorR2, encoderR1, encoderR2);
+Motor motorB(500, -500, motorB1, motorB2, encoderB1, encoderB2);
 
 //translation encoder ISR
 void tInt() {
@@ -102,23 +108,6 @@ void setup() {
 
 
 
-void setMotor (int power, int direction, int motorPin1, int motorPin2) {
-
-  // power is set to on set speed to 255 check diretion
-  if (power == HIGH) {
-    if (direction == LOW) {
-      digitalWrite(motorPin1, LOW);
-      digitalWrite(motorPin2, HIGH);
-    } else if (direction == HIGH) {
-      digitalWrite(motorPin1, HIGH);
-      digitalWrite(motorPin2, LOW);
-    } 
-  } else {
-    digitalWrite(motorPin1, LOW);
-    digitalWrite(motorPin2, LOW);
-  }
-  
-}
 
 void loop() {
 
@@ -131,27 +120,28 @@ void loop() {
   int ccButtonBlueVal = digitalRead(ccButtonBlue);
 
   if (cButtonRedVal == ccButtonRedVal) {
-    setMotor(LOW, clockwise, motorT1, motorT2);
+    
+    motorT.setMotor(LOW, clockwise);
   } else if (cButtonRedVal == HIGH) {
-    setMotor(HIGH, clockwise, motorT1, motorT2);
+    motorT.setMotor(HIGH, clockwise);
   } else if (ccButtonRedVal == HIGH) {
-    setMotor(HIGH, cClockwise, motorT1, motorT2);
+    motorT.setMotor(HIGH, cClockwise);
   }
 
   if (cButtonGreenVal == ccButtonGreenVal) {
-    setMotor(LOW, clockwise, motorR1, motorR2);
+    motorR.setMotor(LOW, clockwise);
   } else if (cButtonGreenVal == HIGH) {
-    setMotor(HIGH, clockwise, motorR1, motorR2);
+    motorR.setMotor(HIGH, clockwise);
   } else if (ccButtonGreenVal == HIGH) {
-    setMotor(HIGH, cClockwise, motorR1, motorR2);
+    motorR.setMotor(HIGH, cClockwise);
   }
 
   if (cButtonBlueVal == ccButtonBlueVal) {
-    setMotor(LOW, clockwise, motorB1, motorB2);
+    motorB.setMotor(LOW, clockwise);
   } else if (cButtonBlueVal == HIGH) {
-    setMotor(HIGH, clockwise, motorB1, motorB2);
+    motorB.setMotor(HIGH, clockwise);
   } else if (ccButtonBlueVal == HIGH) {
-    setMotor(HIGH, cClockwise, motorB1, motorB2);
+    motorB.setMotor(HIGH, cClockwise);
   }
   
   //Serial.printf("TranslationTicks: %d\n", translationTicks);
