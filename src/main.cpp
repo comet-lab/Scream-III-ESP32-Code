@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <motor.h>
+#include <PID_v1.h>
+#include <analogWrite.h>
 
 //define rotation 
 
@@ -17,10 +19,13 @@
 //define motor output pins
 #define motorT1         23
 #define motorT2         22
+#define motorTE         27
 #define motorR1         18
 #define motorR2         5
+#define motorRE         14
 #define motorB1         4
 #define motorB2         0
+#define motorBE         12
 
 //define encoder pins
 #define encoderT1       21
@@ -32,18 +37,30 @@
 
 //initialize global encoder variables
 
-int translationTicks = 0;
-int rotationTicks = 0;
-int bendingTicks = 0;
+double translationTicks = 0;
+double rotationTicks = 0;
+double bendingTicks = 0;
+
+// Variables for PWM properties
+const int frequency = 1000;
+const int pwmChannel = 0;
+const int resolution = 8; 
+
+//PID
+double setPoint, input, output;
+double kp = 2, ki = 5, kd = 1;
+PID myPID(&bendingTicks, &output, &setPoint, kp, ki, kd, DIRECT);
+
+int testNum = 0;
 
 //initialize translation to bending ratio
 
 int bendingRatio = 10;
 
 //create motor objects
-Motor motorT(500, -500, motorT1, motorT2, encoderT1, encoderT2);
-Motor motorR(500, -500, motorR1, motorR2, encoderR1, encoderR2);
-Motor motorB(500, -500, motorB1, motorB2, encoderB1, encoderB2);
+Motor motorT(5000, -5000, motorT1, motorT2, encoderT1, encoderT2);
+Motor motorR(5000, -5000, motorR1, motorR2, encoderR1, encoderR2);
+Motor motorB(5000, -5000, motorB1, motorB2, encoderB1, encoderB2);
 
 //translation encoder ISR
 void tInt() {
@@ -108,6 +125,11 @@ void setup() {
   attachInterrupt(encoderT1, tInt, RISING);
   attachInterrupt(encoderR1,rInt, RISING);
   attachInterrupt(encoderB1, bInt, RISING);
+
+  setPoint = 1000;
+  Serial.println("setup completed");
+
+  myPID.SetMode(AUTOMATIC);
 }
 
 
@@ -147,9 +169,17 @@ void loop() {
   } else if (ccButtonBlueVal == HIGH) {
     motorB.setMotor(HIGH, cClockwise, bendingTicks);
   }
-  
+  myPID.Compute();
+  //motorB.setMotor(HIGH, clockwise, bendingTicks);
+  Serial.printf("Output: %d\n", testNum);
+
+  analogWrite(motorBE, testNum);
+  testNum++;
+  if (testNum >= 255) {
+    testNum = 0;
+  }
   //Serial.printf("TranslationTicks: %d\n", translationTicks);
-  Serial.printf("Rotation Ticks: %d\n", rotationTicks);
+  // Serial.printf("Rotation Ticks: %lf\n", rotationTicks);
   //Serial.printf("Bending Ticks: %d\n", bendingTicks);
   
 
