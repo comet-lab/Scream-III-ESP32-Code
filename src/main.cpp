@@ -41,9 +41,9 @@ int bendingTicks = 0;
 int bendingRatio = 10;
 
 //create motor objects
-Motor motorT(500, -500, motorT1, motorT2, encoderT1, encoderT2);
-Motor motorR(500, -500, motorR1, motorR2, encoderR1, encoderR2);
-Motor motorB(500, -500, motorB1, motorB2, encoderB1, encoderB2);
+Motor motorT(5000, -5000, motorT1, motorT2, encoderT1, encoderT2);
+Motor motorR(5000, -5000, motorR1, motorR2, encoderR1, encoderR2);
+Motor motorB(5000, -5000, motorB1, motorB2, encoderB1, encoderB2);
 
 //translation encoder ISR
 void tInt() {
