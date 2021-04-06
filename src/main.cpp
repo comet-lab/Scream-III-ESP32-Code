@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <motor.h>
-#include <PID_v1.h>
 #include <analogWrite.h>
+#include <PID_v1.h>
 
 //define rotation 
 
@@ -19,13 +19,13 @@
 //define motor output pins
 #define motorT1         23
 #define motorT2         22
-#define motorTE         27
+#define motorTEn        27
 #define motorR1         18
 #define motorR2         5
-#define motorRE         14
+#define motorREn        14
 #define motorB1         4
 #define motorB2         0
-#define motorBE         12
+#define motorBEn        12
 
 //define encoder pins
 #define encoderT1       21
@@ -35,21 +35,25 @@
 #define encoderB1       2
 #define encoderB2       15
 
-//initialize global encoder variables
 
+//initialize global encoder variables
 double translationTicks = 0;
 double rotationTicks = 0;
 double bendingTicks = 0;
 
-// Variables for PWM properties
-const int frequency = 1000;
-const int pwmChannel = 0;
-const int resolution = 8; 
+double setPointT, inputT, outputT;
+double setPointR, inputR, outputR;
+double setPointB, inputB, outputB;
+
+double Tkp = 2, Tki = 5, Tkd = 1;
+double Rkp = 2, Rki = 5, Rkd = 1;
+double Bkp = 2, Bki = 5, Bkd = 1;
 
 //PID
-double setPoint, input, output;
-double kp = 2, ki = 5, kd = 1;
-PID myPID(&bendingTicks, &output, &setPoint, kp, ki, kd, DIRECT);
+PID pidT(&translationTicks, &outputT, &setPointT, Tkp, Tki, Tkd, DIRECT);
+PID pidR(&rotationTicks, &outputR, &setPointR, Rkp, Rki, Rkd, DIRECT);
+PID pidB(&bendingTicks, &outputB, &setPointB, Bkp, Bki, Bkd, DIRECT);
+
 
 int testNum = 0;
 
@@ -58,13 +62,13 @@ int testNum = 0;
 int bendingRatio = 10;
 
 //create motor objects
-Motor motorT(5000, -5000, motorT1, motorT2, encoderT1, encoderT2);
-Motor motorR(5000, -5000, motorR1, motorR2, encoderR1, encoderR2);
-Motor motorB(5000, -5000, motorB1, motorB2, encoderB1, encoderB2);
+Motor motorT(&pidT, 5000, -5000, motorT1, motorT2, encoderT1, encoderT2);
+Motor motorR(&pidR, 5000, -5000, motorR1, motorR2, encoderR1, encoderR2);
+Motor motorB(&pidB, 5000, -5000, motorB1, motorB2, encoderB1, encoderB2);
+
 
 //translation encoder ISR
 void tInt() {
-
   int direction = digitalRead(encoderT2);
 
   if (direction == HIGH) {
@@ -72,9 +76,6 @@ void tInt() {
   } else {
     translationTicks--;
   }
-
-
-  //Serial.println(translationTicks);
 }
 
 //rotation encoder ISR
@@ -101,7 +102,6 @@ void bInt() {
 
 
 void setup() {
-
   //start Serial connection
   Serial.begin(9600); //115200 should work because its esp32 but only 9600 works. Weird
 
@@ -125,14 +125,8 @@ void setup() {
   attachInterrupt(encoderT1, tInt, RISING);
   attachInterrupt(encoderR1,rInt, RISING);
   attachInterrupt(encoderB1, bInt, RISING);
-
-  setPoint = 1000;
   Serial.println("setup completed");
-
-  myPID.SetMode(AUTOMATIC);
 }
-
-
 
 
 void loop() {
@@ -145,42 +139,63 @@ void loop() {
   int cButtonBlueVal = digitalRead(cButtonBlue);
   int ccButtonBlueVal = digitalRead(ccButtonBlue);
 
+  // Button Controlled movement 
+  // if (cButtonRedVal == ccButtonRedVal) {
+  //   motorT.setMotor(LOW, clockwise, translationTicks);
+  // } else if (cButtonRedVal == HIGH) {
+  //   motorT.setMotor(HIGH, clockwise, translationTicks);
+  // } else if (ccButtonRedVal == HIGH) {
+  //   motorT.setMotor(HIGH, cClockwise, translationTicks);
+  // }
+
+  // if (cButtonGreenVal == ccButtonGreenVal) {
+  //   motorR.setMotor(LOW, clockwise, rotationTicks);
+  // } else if (cButtonGreenVal == HIGH) {
+   
+  //   motorR.setMotor(HIGH, clockwise, rotationTicks);
+  // } else if (ccButtonGreenVal == HIGH) {
+  //   motorR.setMotor(HIGH, cClockwise, rotationTicks);
+  // }
+
+  // if (cButtonBlueVal == ccButtonBlueVal) {
+  //   motorB.setMotor(LOW, clockwise, bendingTicks);
+  // } else if (cButtonBlueVal == HIGH) {
+  //   motorB.setMotor(HIGH, clockwise, bendingTicks);
+  // } else if (ccButtonBlueVal == HIGH) {
+  //   motorB.setMotor(HIGH, cClockwise, bendingTicks);
+  // }
+
   if (cButtonRedVal == ccButtonRedVal) {
-    
     motorT.setMotor(LOW, clockwise, translationTicks);
-  } else if (cButtonRedVal == HIGH) {
+  } else if (cButtonRedVal == HIGH) { 
+    int targetTicks = 1000; // or some other number we decide
+    while(1){
+      // compute PID and get its setpoint 
+      setPointT = targetTicks; //we should only need to change this variable since the address is passed to PID
+      pidT.Compute();               //fixed
+
+      // write it to motor? 
+      // TODO how do we use PID output to control speed??? 
+      //    do we do motor.setMotor(etc) or do we do analogWrite(enable pin)? 
+        
+      // Print so we can copy to kind of like a csv 
+      Serial.printf("TranslationTicks: %lf,\n", translationTicks);
+    }    
+    // Let PID control motor 
+
+
+    // Print ticks "csv"
+    
     motorT.setMotor(HIGH, clockwise, translationTicks);
-  } else if (ccButtonRedVal == HIGH) {
-    motorT.setMotor(HIGH, cClockwise, translationTicks);
-  }
+  } 
 
-  if (cButtonGreenVal == ccButtonGreenVal) {
-    motorR.setMotor(LOW, clockwise, rotationTicks);
-  } else if (cButtonGreenVal == HIGH) {
-    motorR.setMotor(HIGH, clockwise, rotationTicks);
-  } else if (ccButtonGreenVal == HIGH) {
-    motorR.setMotor(HIGH, cClockwise, rotationTicks);
-  }
+  // If we moved T or B then we need to correct the other one (B or T) using PID 
 
-  if (cButtonBlueVal == ccButtonBlueVal) {
-    motorB.setMotor(LOW, clockwise, bendingTicks);
-  } else if (cButtonBlueVal == HIGH) {
-    motorB.setMotor(HIGH, clockwise, bendingTicks);
-  } else if (ccButtonBlueVal == HIGH) {
-    motorB.setMotor(HIGH, cClockwise, bendingTicks);
-  }
-  myPID.Compute();
-  //motorB.setMotor(HIGH, clockwise, bendingTicks);
-  Serial.printf("Output: %d\n", testNum);
 
-  analogWrite(motorBE, testNum);
-  testNum++;
-  if (testNum >= 255) {
-    testNum = 0;
-  }
-  //Serial.printf("TranslationTicks: %d\n", translationTicks);
+
+  //Serial.printf("TranslationTicks: %lf\n", translationTicks);
   // Serial.printf("Rotation Ticks: %lf\n", rotationTicks);
-  //Serial.printf("Bending Ticks: %d\n", bendingTicks);
+  //Serial.printf("Bending Ticks: %lf\n", bendingTicks);
   
 
   delay(100);

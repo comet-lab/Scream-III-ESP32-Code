@@ -1,7 +1,8 @@
 #include <motor.h>
 #include<Arduino.h>
 
-Motor::Motor(int max, int min, int p1, int p2, int p3, int p4) {
+Motor::Motor(PID *myPID, int max, int min, int p1, int p2, int p3, int p4) {
+    pid = myPID; 
     maxTicks = max;
     minTicks = min;
     motorPin1 = p1;
