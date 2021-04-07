@@ -104,10 +104,20 @@ void setup() {
   pinMode(motorB1, OUTPUT);
   pinMode(motorB2, OUTPUT);
 
+  pinMode(27, OUTPUT);
+  pinMode(14, OUTPUT);
+  pinMode(12, OUTPUT);
+
   //attach encoder pins to ISR functions
   attachInterrupt(encoderT1, tInt, RISING);
   attachInterrupt(encoderR1,rInt, RISING);
   attachInterrupt(encoderB1, bInt, RISING);
+
+  digitalWrite(27, HIGH);
+  digitalWrite(14, HIGH);
+  digitalWrite(12, HIGH);
+
+
 }
 
 
