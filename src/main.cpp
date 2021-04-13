@@ -15,10 +15,11 @@
 #define ccButtonBlue    25
 
 //define motor output pins
-#define motorT1         23
-#define motorT2         22
-#define motorR1         18
-#define motorR2         5
+#define motorT1         23 //15
+#define motorT2         22 //0
+#define motorTE         1 // 2
+#define motorR1         18 // 17
+#define motorR2         5  // 5
 #define motorB1         4
 #define motorB2         0
 
