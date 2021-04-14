@@ -14,9 +14,8 @@ void Motor::setMotor(int power, int direction, int currentTick) {
 
     // power is set to on set speed to 255 check diretion
     if (power == HIGH) {
-        boolean test = (direction == HIGH && currentTick <= maxTicks);
-        Serial.println(test);
         if (direction == LOW && currentTick >= minTicks) {
+            Serial.println("here");
             digitalWrite(motorPin1, LOW);
             digitalWrite(motorPin2, HIGH);
         } else if (direction == HIGH && currentTick <= maxTicks) {

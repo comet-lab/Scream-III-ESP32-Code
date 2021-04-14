@@ -7,28 +7,31 @@
 #define cClockwise      0x0
 
 //define button pins
-#define cButtonRed      35
-#define ccButtonRed     34
-#define cButtonGreen    33
-#define ccButtonGreen   32
-#define cButtonBlue     26
-#define ccButtonBlue    25
+#define cButtonRed      32
+#define ccButtonRed     33
+#define cButtonGreen    25
+#define ccButtonGreen   26
+#define cButtonBlue     27
+#define ccButtonBlue    12
 
 //define motor output pins
-#define motorT1         23
-#define motorT2         22
-#define motorR1         18
-#define motorR2         5
-#define motorB1         4
-#define motorB2         0
+#define motorT1         15
+#define motorT2         0 
+#define motorTE         2 
+#define motorB1         4 
+#define motorB2         16   
+#define motorBE         24
+#define motorR1         21
+#define motorR2         35
+#define motorRE         34
 
 //define encoder pins
-#define encoderT1       21
-#define encoderT2       19
-#define encoderR1       17
-#define encoderR2       16
-#define encoderB1       2
-#define encoderB2       15
+#define encoderT1       17
+#define encoderT2       5
+#define encoderB1       22
+#define encoderB2       23
+#define encoderR1       18
+#define encoderR2       19
 
 //initialize global encoder variables
 
@@ -104,18 +107,18 @@ void setup() {
   pinMode(motorB1, OUTPUT);
   pinMode(motorB2, OUTPUT);
 
-  pinMode(27, OUTPUT);
-  pinMode(14, OUTPUT);
-  pinMode(12, OUTPUT);
+  pinMode(motorTE, OUTPUT);
+  pinMode(motorRE, OUTPUT);
+  pinMode(motorBE, OUTPUT);
 
   //attach encoder pins to ISR functions
   attachInterrupt(encoderT1, tInt, RISING);
   attachInterrupt(encoderR1,rInt, RISING);
   attachInterrupt(encoderB1, bInt, RISING);
 
-  digitalWrite(27, HIGH);
-  digitalWrite(14, HIGH);
-  digitalWrite(12, HIGH);
+  digitalWrite(motorTE, HIGH);
+  digitalWrite(motorBE, HIGH);
+  digitalWrite(motorRE, HIGH);
 
 
 }
@@ -126,6 +129,7 @@ void setup() {
 void loop() {
 
   //read all buttons 
+
   int cButtonRedVal = digitalRead(cButtonRed);
   int ccButtonRedVal = digitalRead(ccButtonRed);
   int cButtonGreenVal = digitalRead(cButtonGreen);
@@ -161,7 +165,6 @@ void loop() {
   //Serial.printf("TranslationTicks: %d\n", translationTicks);
   //Serial.printf("Rotation Ticks: %d\n", rotationTicks);
   //Serial.printf("Bending Ticks: %d\n", bendingTicks);
-  Serial.println(digitalRead(35));
   
 
   delay(100);
