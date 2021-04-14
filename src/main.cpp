@@ -159,8 +159,9 @@ void loop() {
   }
   
   //Serial.printf("TranslationTicks: %d\n", translationTicks);
-  Serial.printf("Rotation Ticks: %d\n", rotationTicks);
+  //Serial.printf("Rotation Ticks: %d\n", rotationTicks);
   //Serial.printf("Bending Ticks: %d\n", bendingTicks);
+  Serial.println(digitalRead(35));
   
 
   delay(100);
