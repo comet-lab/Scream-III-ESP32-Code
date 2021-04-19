@@ -150,6 +150,7 @@ void loop() {
     motorR.setMotor(LOW, clockwise, rotationTicks);
   } else if (cButtonGreenVal == HIGH) {
     motorR.setMotor(HIGH, clockwise, rotationTicks);
+    Serial.println("here");
   } else if (ccButtonGreenVal == HIGH) {
     motorR.setMotor(HIGH, cClockwise, rotationTicks);
   }
@@ -165,6 +166,8 @@ void loop() {
   //Serial.printf("TranslationTicks: %d\n", translationTicks);
   //Serial.printf("Rotation Ticks: %d\n", rotationTicks);
   //Serial.printf("Bending Ticks: %d\n", bendingTicks);
+  Serial.println(ccButtonGreenVal);
+  Serial.println(cButtonGreenVal);
   
 
   delay(100);
